@@ -9,6 +9,7 @@
 struct config {
 
     double candidate;
+    int num_parallel_tweaks;
     double (*eval)(double);
     double max_seconds;
     double max_change;
@@ -39,18 +40,21 @@ double climb(struct config local_config) {
     double new_quality;
 
     time_t start_seconds = time(NULL);
-    
+
     if (local_config.verbose) {
             printf("current_candidate: %f\nquality: %f\n", candidate, quality);
     }
 
     while (time(NULL) - start_seconds <= local_config.max_seconds) {
-        new_candidate = mutate(candidate, local_config.max_change, local_config.sign);
-        new_quality = local_config.eval(new_candidate);
 
-        if (new_quality > quality) {
-            candidate = new_candidate;
-            quality = new_quality;
+        for (int i = 0; i < local_config.num_parallel_tweaks; i++) {
+            new_candidate = mutate(candidate, local_config.max_change, local_config.sign); 
+            new_quality = local_config.eval(new_candidate);
+
+            if (new_quality > quality) {
+                candidate = new_candidate;
+                quality = new_quality;
+            }
         }
 
         if (local_config.ignore_max_quality == 0  && new_quality >= local_config.max_quality) {

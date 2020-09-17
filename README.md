@@ -2,3 +2,4 @@
 Currently supported:
 -   Hill Climbers:
     -   Stochastic
+    -   Steepest Ascent
